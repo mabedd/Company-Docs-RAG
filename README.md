@@ -1,5 +1,7 @@
 # Company Docs RAG
 
+![CI](https://github.com/mabedd/Company-Docs-RAG/actions/workflows/ci.yml/badge.svg)
+
 Internal document Q&A with ingestion, retrieval, grounded answers, and citations.
 
 ```
