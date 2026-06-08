@@ -97,3 +97,58 @@ GitHub Actions (`.github/workflows/ci.yml`) runs on every push/PR to `main`/`mas
 1. **Backend tests** — `pytest` inside the backend test image
 2. **Frontend build** — validates the production Docker build
 3. **Integration** — full compose stack, seed data, RAG smoke test via nginx
+
+## Publish (GHCR)
+
+On every push to `main`/`master`, `.github/workflows/publish.yml` builds and pushes:
+
+- `ghcr.io/mabedd/company-docs-rag-backend:latest` (+ commit SHA tag)
+- `ghcr.io/mabedd/company-docs-rag-frontend:latest` (+ commit SHA tag)
+
+After the first publish, open **GitHub → Packages** and set each package to **Public** (or use `docker login ghcr.io` on the VM with a PAT that has `read:packages`).
+
+## Deploy to a Linux VM
+
+### 1. Merge to `main` and wait for Publish workflow
+
+Images must exist in GHCR before the VM can pull them.
+
+### 2. Prepare the VM (Ubuntu)
+
+```bash
+# SSH into your VM, then:
+git clone https://github.com/mabedd/Company-Docs-RAG.git
+cd Company-Docs-RAG
+sudo ./deploy/setup-vm.sh
+```
+
+Log out and back in so Docker group membership applies.
+
+### 3. Configure and deploy
+
+```bash
+cp deploy/.env.example .env
+# edit .env if needed (HTTP_PORT, OPENAI_API_KEY)
+
+# If packages are private:
+echo <GITHUB_PAT> | docker login ghcr.io -u mabedd --password-stdin
+
+./deploy/deploy.sh
+```
+
+Open `http://<vm-ip>` (or `:8080` if you set `HTTP_PORT=8080`).
+
+### 4. Seed documents on the server
+
+```bash
+docker compose -f docker-compose.prod.yml exec backend python data/sample/ingest_samples.py
+```
+
+### 5. Update to a new release
+
+```bash
+git pull
+./deploy/deploy.sh
+```
+
+Or pin a specific build: `IMAGE_TAG=<commit-sha>` in `.env`, then `./deploy/deploy.sh`.
