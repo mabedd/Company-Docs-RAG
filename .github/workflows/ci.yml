@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  backend-test:
+    name: Backend tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run pytest in Docker
+        run: docker compose --profile test run --rm backend-test
+
+  frontend-build:
+    name: Frontend build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build frontend image
+        run: docker build -t company-docs-rag-frontend ./frontend
+
+  integration:
+    name: Integration smoke test
+    runs-on: ubuntu-latest
+    needs: [backend-test, frontend-build]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start stack
+        run: docker compose up --build -d
+
+      - name: Wait for API health
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:8080/api/health; then
+              echo ""
+              echo "Stack is healthy"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Stack failed to become healthy"
+          docker compose logs
+          exit 1
+
+      - name: Seed sample documents
+        run: docker compose exec -T backend python data/sample/ingest_samples.py
+
+      - name: Verify indexed documents
+        run: |
+          count=$(curl -sf http://localhost:8080/api/health | python3 -c "import sys, json; print(json.load(sys.stdin)['documents_indexed'])")
+          echo "Indexed chunks: $count"
+          test "$count" -gt 0
+
+      - name: Smoke test RAG query
+        run: |
+          python3 <<'PY'
+          import json
+          import sys
+          import urllib.request
+
+          req = urllib.request.Request(
+              "http://localhost:8080/api/query",
+              data=json.dumps(
+                  {"question": "How many vacation days do employees receive?"}
+              ).encode(),
+              headers={"Content-Type": "application/json"},
+              method="POST",
+          )
+          body = json.load(urllib.request.urlopen(req))
+
+          assert body["grounded"] is True, body
+          assert "20" in body["answer"], body["answer"]
+          assert len(body["citations"]) > 0, body
+
+          print("Smoke test passed")
+          print(body["answer"][:120])
+          PY
+
+      - name: Tear down
+        if: always()
+        run: docker compose down -v

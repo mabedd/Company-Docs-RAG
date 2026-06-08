@@ -1,0 +1,27 @@
+Company Security Policy — Effective January 2025
+
+Authentication and Access
+- Multi-factor authentication (MFA) is mandatory on all production systems, admin consoles, and VPN access.
+- SSO via Okta is required for all employees. Local accounts are prohibited except break-glass emergency accounts.
+- Passwords must be at least 14 characters and rotated every 90 days for systems that do not support SSO.
+- Privileged access reviews occur quarterly. Unused accounts are disabled within 48 hours of offboarding.
+
+Data Classification
+- Public: marketing materials approved for external release.
+- Internal: team wikis, roadmaps, and operational runbooks.
+- Confidential: customer data, financial reports, and HR records.
+- Restricted: credentials, encryption keys, and security incident details.
+
+Incident Response
+- Report suspected incidents to security@company.com or the #security-alerts Slack channel within 1 hour.
+- Severity 1 incidents (data breach, production compromise) trigger the on-call security lead and executive notification.
+- All production changes during an active incident require approval from the incident commander.
+
+Device and Endpoint Security
+- Company-managed laptops must run the approved MDM agent and full-disk encryption.
+- Personal devices may not access production systems or Confidential data.
+- USB storage devices are blocked by default; exceptions require Security team approval.
+
+Logging and Monitoring
+- Production systems retain audit logs for 12 months.
+- Failed login attempts, privilege escalations, and data exports are monitored 24/7.

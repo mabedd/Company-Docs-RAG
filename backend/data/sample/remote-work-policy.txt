@@ -1,0 +1,27 @@
+Remote Work Policy — Human Resources
+
+Eligibility
+- Full-time employees who have completed their probationary period (90 days) may request a remote work arrangement.
+- Roles that require on-site lab access, hardware testing, or in-person customer delivery are not eligible.
+
+Schedule
+- Remote work is permitted up to 3 days per week with written manager approval.
+- At least 2 days per week must be spent in the office for team collaboration, unless a full-remote exception is granted by HR and the department director.
+- Core collaboration hours are 10:00–15:00 in the employee's local time zone.
+
+Equipment and Workspace
+- The company provides a laptop, monitor stipend ($500 annually), and ergonomic chair reimbursement up to $300.
+- Employees must have a dedicated workspace with reliable internet (minimum 50 Mbps download).
+- Confidential documents must not be visible during video calls or accessible to household members.
+
+Communication Expectations
+- Remote employees must be reachable on Slack during working hours and respond within 2 hours.
+- Camera-on is encouraged for team meetings but not required for company-wide town halls.
+
+International Remote Work
+- Working outside your home country for more than 14 days per year requires HR and Legal approval.
+- Tax and payroll implications must be resolved before travel begins.
+
+Review and Revocation
+- Remote arrangements are reviewed every 6 months.
+- Managers may revoke remote privileges with 2 weeks notice if team performance or collaboration goals are not met.
